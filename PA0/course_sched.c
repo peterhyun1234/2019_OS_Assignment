@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 	char* info[10];
 	char buf[BUFSIZ];
 	memset(buf, 0x00, BUFSIZ);
-	fp = fopen(argv[1], "r");
+	fp = fopen("./in/database.csv", "r");
 
 	if(fp != NULL)
 	{
@@ -46,49 +46,7 @@ int main(int argc, char** argv)
 
 
 
-/*
-	
-	// 문자열 파싱하는 부분(첫번째 방법)
-	for(i; i < n-1; i++)
-	{
-		char* ptr = strtok(info[i], ",");
-	
-		while(ptr != NULL)
-		{
-			if(N==0) // 과목이름
-			{
-		//		strcpy(ce[i].name, ptr);
-			}
-			else if(N == 1)	// 과목 난이도
-			{
-		//		ce[i].difficulty = atof(ptr);
-			}
-			else if(N == 2)	// 선수 과목 1
-			{
-		//		strcpy(ce[i].prerequisites[0].name, ptr);
-			}
-			else	// 선수 과목 2
-			{
-		//		strcpy(ce[i].prerequisites[1].name, ptr);
-			}
-
-			if(N >= 2)
-				ce[i].n_prerequisites = N - 1;
-			else
-				ce[i].n_prerequisites = 0;
-
-			ptr = strtok(NULL, " ");
-			N++;
-		}
-
-		N = 0;
-
-	}
-	
-*/
-
-
-
+	// 문자열 파싱
 	for(i; i < n-1; i++)
 	{
 		char *s1 = malloc(sizeof(char) *30);
@@ -115,16 +73,10 @@ int main(int argc, char** argv)
 		//		strcpy(ce[i].prerequisites[1].name, ptr);
 			}
 
-			if(N >= 2)
-				ce[i].n_prerequisites = N - 1;
-			else
-				ce[i].n_prerequisites = 0;
-
 			printf("%s\n", ptr);
 
 			ptr = strtok(NULL, " ");
 			N++;
-			printf("N == %d\n",N);
 		}
 		N = 0;
 	}
