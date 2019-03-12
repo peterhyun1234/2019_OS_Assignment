@@ -10,7 +10,7 @@
 
 struct CourseEntry {
   char name[MAX_LENGTH]; // 과목의 이름
-  struct CourseEntry* prerequisites; // 선수 과목들
+  struct CourseEntry *prerequisites; // 선수 과목들
   int n_prerequisites; // 선수 과목의 수
   float difficulty; // 과목의 난이도
 };
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 			n++;
 		}	
 	} 
-
+	ce[i].prerequisites = malloc(sizeof(struct CourseEntry)*ce[i].n_prerequisites);
 
 
 	// 문자열 파싱
@@ -70,17 +70,18 @@ int main(int argc, char** argv)
 			else if(N == 1)	// 선수 과목의 수 
 			{
 				ce[i].n_prerequisites = atoi(ptr);
-//				ce[i].prerequisites = malloc(sizeof(struct CourseEntry)*ce[i].n_prerequisites);
 			}
 			else if(N == 2)	// 선수 과목 1
 			{
 				rmvfirst(ptr);
 	 			strcpy(sub1, ptr);
-			}
+				ce[i].prerequisites = &ce[0];
+			}	
 			else	// 선수 과목 2
 			{	
 				rmvfirst(ptr);
-				strcpy(sub2, ptr);
+				strcpy(sub2, ptr);			
+				ce[i].prerequisites = &ce[1];
 			}
 
 			ptr = strtok(NULL, ",");
@@ -93,7 +94,7 @@ int main(int argc, char** argv)
 	
 
 
-/*
+
 
 for(int a = 0; a < i; a++)
 	{
@@ -104,11 +105,11 @@ for(int a = 0; a < i; a++)
 		printf("선수 과목의 수 : %d\n", ce[a].n_prerequisites);
 
 		for(int b = 0; b < ce[a].n_prerequisites; b++)
-			printf("선수과목 %d : %s\n ",b+1,ce[a].prerequisites[b].name);
+			printf("선수과목 %d : %s\n",b+1,ce[a].prerequisites[b].name);
 
 		printf("\n\n");
 	}
-*/
+
 	fclose(fp);
 
   return 0;
@@ -124,3 +125,13 @@ void rmvfirst(char *buf)
 
 	buf[i-1] = '\0';
 }
+
+/*
+void set_CE(struct CourseEntry *ce)
+{
+	cd->difficulty = 5;
+	ce[i].prerequisites = malloc(sizeof(struct CourseEntry));
+}
+*/
+
+
