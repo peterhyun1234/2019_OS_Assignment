@@ -58,30 +58,28 @@ int main(int argc, char** argv)
 		{
 				if(N==0) // 과목이름
 			{
-		//		strcpy(ce[i].name, ptr);
+				strcpy(ce[i].name, ptr);
 			}
-			else if(N == 1)	// 과목 난이도
+			else if(N == 1)	// 선수 과목의 수 
 			{
-		//		ce[i].difficulty = atof(ptr);
+				ce[i].prerequisites = atoi(ptr);
 			}
 			else if(N == 2)	// 선수 과목 1
 			{
-		//		strcpy(ce[i].prerequisites[0].name, ptr);
+				strcpy(ce[i].prerequisites[0].name, ptr);
 			}
 			else	// 선수 과목 2
 			{
-		//		strcpy(ce[i].prerequisites[1].name, ptr);
+				strcpy(ce[i].prerequisites[1].name, ptr);
 			}
 
-			printf("%s\n", ptr);
 
-			ptr = strtok(NULL, " ");
+			ptr = strtok(NULL, " ,");
 			N++;
 		}
 		N = 0;
 	}
 	
-
 
 
 
@@ -98,7 +96,6 @@ for(int a = 0; a < i; a++)
 
 		printf("\n\n");
 	}
-
 
 	fclose(fp);
 
