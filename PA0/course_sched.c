@@ -15,7 +15,9 @@ struct CourseEntry {
   float difficulty; // 과목의 난이도
 };
 
+int Find_subject_num(char* subject);
 void rmvfirst(char* buf);
+
 int main(int argc, char** argv)
 {
 
@@ -25,8 +27,10 @@ int main(int argc, char** argv)
 
 	int i = 0;
 	int n = 0;
+	int k = 0;
 	int N = 0;
 	char* info[10];
+	char* info2[10];
 	char buf[BUFSIZ];
 	char sub1[BUFSIZ];
 	char sub2[BUFSIZ];
@@ -58,7 +62,9 @@ int main(int argc, char** argv)
 
 		strcpy(s1, info[i]);
 
-		printf("[%d] %s\n",i,info[i]);
+//		printf("[%d] %s\n",i,info[i]);
+
+		ce[i].difficulty = 5.0;
 
 		char* ptr = strtok(s1, ",");
 		while(ptr != NULL)
@@ -88,10 +94,106 @@ int main(int argc, char** argv)
 		 //	printf("ptr[%d] %s\n",i, ptr); 
 			N++;
 		}
-			printf("sub1 =%s\nsub2 =%s\n", sub1, sub2);
+//			printf("sub1 =%s\nsub2 =%s\n", sub1, sub2);
 		N = 0;
 	}
 	
+
+
+
+
+
+
+
+
+
+
+
+
+// argv[1]에서 받아온 데이터 파싱
+
+	FILE *fp2 = NULL;
+	
+
+	char buf2[BUFSIZ];
+	memset(buf2, 0x00, BUFSIZ);
+	fp2 = fopen(argv[1], "r");
+
+	if(fp2 != NULL)
+	{
+
+		while(!feof(fp2))
+		{
+
+			fgets(buf2, 1000, fp2);
+			char* newptr = (char*)malloc(sizeof(char)*(strlen(buf2)+1));
+			strcpy(newptr,buf2);
+			info2[k] = newptr;
+			k++;
+		}	
+	} 
+
+
+	// 문자열 파싱
+	for(int I; I< k-1; I++)
+	{
+		char *s1 = malloc(sizeof(char) *30);
+		int sub_num[2] = {0,};
+		char dif[100];
+		strcpy(s1, info2[I]);
+
+		char* ptr = strtok(s1, ",");
+		while(ptr != NULL)
+		{
+			if(N==0) // 과목 이름 받아서 과목 번호 찾기
+			{
+				sub_num[I] = Find_subject_num(ptr);
+			}
+			else if(N == 1)	// 과목 난이도 받고 과목에 배정
+			{
+				rmvfirst(ptr);
+	 			strcpy(dif, ptr);
+				ce[sub_num[I]].difficulty = atof(dif); 
+			}
+
+
+			
+		//	printf("%s\n", ptr); 
+			
+			ptr = strtok(NULL, ",");
+			N++;
+		}
+//			printf("sub1 =%s\nsub2 =%s\n", sub1, sub2);
+		N = 0;
+	}
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -111,6 +213,7 @@ for(int a = 0; a < i; a++)
 	}
 
 	fclose(fp);
+	fclose(fp2);
 
   return 0;
 }
@@ -126,12 +229,24 @@ void rmvfirst(char *buf)
 	buf[i-1] = '\0';
 }
 
-/*
-void set_CE(struct CourseEntry *ce)
+
+int Find_subject_num(char* subject)
 {
-	cd->difficulty = 5;
-	ce[i].prerequisites = malloc(sizeof(struct CourseEntry));
+
+	for(int a = 0; a<5; a++)
+	{
+		if(strcmp(subject,"Computer Programming") == 0)
+			return 0;
+		else if(strcmp(subject, "Discrete Mathematics") == 0)
+			return 1;
+	   else if(strcmp(subject, "Digital Systems") == 0)
+			return 2;
+		else if(strcmp(subject, "Data Structures") == 0)
+			return 3;
+		else if(strcmp(subject, "Computer Architecture") == 0)
+			return 4;
+		else
+			return 5;
+	}
+
 }
-*/
-
-
