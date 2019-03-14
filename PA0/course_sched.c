@@ -101,16 +101,6 @@ int main(int argc, char** argv)
 	
 
 
-
-
-
-
-
-
-
-
-
-
 // argv[1]에서 받아온 데이터 파싱
 
 	FILE *fp2 = NULL;
@@ -172,36 +162,24 @@ int main(int argc, char** argv)
 	// 순서 초기화
 	for(int u = 0; u < 6; u++)
 	Order[u] = u;
-
+/*
 	printf("Before first sorting : ");
 
 	for(int c = 0; c < 6; c++)
 	printf("%d ",Order[c]);
 	printf("\n\n");
 
-
+*/
 	sorting_1(ce, Order);
 
 
-
+/*
 
 	printf("After first sorting : ");
 
 	for(int a = 0; a < 6; a++)
 	printf("%d ",Order[a]);
 	printf("\n\n");
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 for(int a = 0; a < i; a++)
@@ -217,6 +195,13 @@ for(int a = 0; a < i; a++)
 
 		printf("\n\n");
 	}
+
+	*/
+	for(int a = 0; a < i; a++)
+	{
+		printf("%s\n",ce[Order[a]].name);
+	}
+
 	fclose(fp);
 	fclose(fp2);
 
@@ -261,26 +246,26 @@ void sorting_1 (struct CourseEntry ce[], int order[])
 
 	int temp = 0;
 
+	int APB_order[6] = {2, 5, 4, 3, 1, 6}; // 각 과목의 알파벳 순서
+
 	// 난이도 비교 sorting(Bubble Sorting)
 	for(int i = 0; i < 3; i++)
 	{
 		for(int j = 0; j < 2; j++)
 		{
-			if(ce[j].difficulty < ce[j+1].difficulty){
-				printf("%s 의 난이도 %f > %s 의 난이도 %f\n",ce[j].name,ce[j].difficulty,ce[j+1].name,ce[j+1].difficulty); 
+			if(ce[order[j]].difficulty < ce[order[j+1]].difficulty){
 				temp = order[j];
 				order[j] = order[j+1];
 				order[j+1] = temp;
 			}
 		}
 	}
-/*	
-	// 선수 과목 0 일때 난이도가 같을 때 sorting
+	// 선수 과목 0이고  난이도가 같을 때 sorting
 	for(int i=0; i<3; i++)
 	{
-		for(int j = 0; j<3; j++)
+		for(int j = 0; j<2; j++)
 		{
-			if(ce[j].difficulty = ce[j+1].difficulty)
+			if((ce[order[j]].difficulty == ce[order[j+1]].difficulty)&&(APB_order[order[j]] > APB_order[order[j+1]]))	// 난이도 같고 알파벳 순서가 낮으면
 			{
 				temp = order[j];
 				order[j] = order[j+1];
@@ -288,7 +273,6 @@ void sorting_1 (struct CourseEntry ce[], int order[])
 			}
 		}
 	}
-*/
 
 }
 
