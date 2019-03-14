@@ -17,7 +17,7 @@ struct CourseEntry {
 
 int Find_subject_num(char* subject);
 void rmvfirst(char* buf);
-
+void sorting_1 (struct CourseEntry ce[], int order[]);
 int main(int argc, char** argv)
 {
 
@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 	memset(sub1, 0x00, BUFSIZ);
 	memset(sub2, 0x00, BUFSIZ);
 	memset(buf, 0x00, BUFSIZ);
+	int Order[6] = {0,};
 	fp = fopen("./in/database.csv", "r");
 
 	if(fp != NULL)
@@ -166,24 +167,29 @@ int main(int argc, char** argv)
 //			printf("sub1 =%s\nsub2 =%s\n", sub1, sub2);
 		N = 0;
 	}
-	
+
+
+	// 순서 초기화
+	for(int u = 0; u < 6; u++)
+	Order[u] = u;
+
+	printf("Before first sorting : ");
+
+	for(int c = 0; c < 6; c++)
+	printf("%d ",Order[c]);
+	printf("\n\n");
+
+
+	sorting_1(ce, Order);
 
 
 
 
+	printf("After first sorting : ");
 
-
-
-
-
-
-
-
-
-
-
-
-
+	for(int a = 0; a < 6; a++)
+	printf("%d ",Order[a]);
+	printf("\n\n");
 
 
 
@@ -211,13 +217,11 @@ for(int a = 0; a < i; a++)
 
 		printf("\n\n");
 	}
-
 	fclose(fp);
 	fclose(fp2);
 
   return 0;
 }
-
 
 
 void rmvfirst(char *buf)
@@ -250,3 +254,41 @@ int Find_subject_num(char* subject)
 	}
 
 }
+
+// 선수과목 0인 과목들 sorting
+void sorting_1 (struct CourseEntry ce[], int order[])
+{
+
+	int temp = 0;
+
+	// 난이도 비교 sorting(Bubble Sorting)
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 2; j++)
+		{
+			if(ce[j].difficulty < ce[j+1].difficulty){
+				printf("%s 의 난이도 %f > %s 의 난이도 %f\n",ce[j].name,ce[j].difficulty,ce[j+1].name,ce[j+1].difficulty); 
+				temp = order[j];
+				order[j] = order[j+1];
+				order[j+1] = temp;
+			}
+		}
+	}
+/*	
+	// 선수 과목 0 일때 난이도가 같을 때 sorting
+	for(int i=0; i<3; i++)
+	{
+		for(int j = 0; j<3; j++)
+		{
+			if(ce[j].difficulty = ce[j+1].difficulty)
+			{
+				temp = order[j];
+				order[j] = order[j+1];
+				order[j+1] = temp;
+			}
+		}
+	}
+*/
+
+}
+
