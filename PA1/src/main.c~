@@ -5,12 +5,10 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <limits.h>
-#include <fcntl.h>
+
 
 static void do_ls(char *path);
-//int redirect_in(char **arg);
-//int redirect_out(char **arg); 
+
 
 int main()
 {
@@ -233,143 +231,17 @@ int main()
 				}
 
 
-			//	printf("Before Current dir : %s\n",getcwd(curren_dir, 4096));
+				printf("Before Current dir : %s\n",getcwd(curren_dir, 4096));
 				if(chdir(getenv("HOME")) == -1)
 					printf("chdir failed!!\n");
-			//	else
-			//		printf("After current dir : %s\n",getcwd(curren_dir, 4096));
+				else
+					printf("After current dir : %s\n",getcwd(curren_dir, 4096));
 
 				if(chdir("workspace/PA0") == -1)
 					printf("chdir error\n");
-			//	else
-			//		printf("After current dir : %s\n",getcwd(curren_dir, 4096));
-
-				exit(EXIT_SUCCESS);
-			} 
-
-
-			else	// Parent process 
-			{
-				waitpid(pid, &status, WNOHANG);
-				
-			}
-
-		} 
-
-
-
-
-
-
-
-
-
-  		// <echo command>
-
-
-		else if(strncmp(buf, "echo", 4) == 0) {
-			pid_t pid = fork();	// 자식 프로세스를 생성
-
-			int status; // 프로세스의 상태
-
-			if (pid == -1) 	// Fork error
-			{
-				fprintf(stderr, "Error occured during process creation\n");
-				exit(EXIT_FAILURE);
-			} 
-	
-
-			else if (pid == 0)	// Child process 
-			{
-				
-				//command parsing
-
-				//echo1
-				if(strncmp(buf, "echo \"Good luck\" > Big_Fan_Of_KO.txt",30 )==0)
-				{
-				//	printf("첫번째 문장입니다\n");
-					char *arg[] = {"echo", "\"Good luck\"", ">", "Big_Fan_Of_KO.txt"};		
-							int fd;
-					
-					if((fd = open(arg[3], O_RDWR | O_CREAT , 0644)) == -1)
-					{
-						printf("open error\n");
-						exit(1);
-					}
-
-					dup2(fd, 1);	//stdout_fileno
-
-					printf("%s",arg[1]);
-
-					close(fd);
-
-		}
-
-
-				else if(strncmp(buf, "echo \"Good luck too\" > Big_Fan_of_jafffy.txt", 30) == 0)
-				{	
-					char *arg[] = {"echo", "\"Good luck too\"", ">", "Big_Fan_of_jafffy.txt"};		
-								int fd;
-					
-					if((fd = open(arg[3], O_RDWR | O_CREAT, 0644)) == -1)
-					{
-						printf("open error\n");
-						exit(1);
-					}
-
-					dup2(fd, 1);	//stdout_fileno
-
-					printf("%s",arg[1]);
-
-					close(fd);
-
-	
-				//	printf("두번쨰 문장입니다.\n");
-				}
-
-
-
-				else if(strncmp(buf, "echo \"You can make it\" > Manhattan.txt", 30) == 0)
-				{
-					char *arg[] = {"echo", "\"You can make it\"", ">", "Manhattan.txt"};		
-					int fd;
-					
-					if((fd = open(arg[3], O_RDWR | O_CREAT, 0644)) == -1)
-					{
-						printf("open error\n");
-						exit(1);
-					}
-
-					dup2(fd, 1);	//stdout_fileno
-
-					printf("%s",arg[1]);
-
-					close(fd);
-
-
-				//	printf("세번째 문장입니다.\n");
-				}
-
-//				for(int a = 0; a < N; a++)
-//					printf("명령어 파싱 순서 %d : %s.\n", a, arg[a]);
-
-			
-
-
-
-
-
-				// <echo Environmental variable>
-/*
 				else
-				{
-				
-				}
+					printf("After current dir : %s\n",getcwd(curren_dir, 4096));
 
-*/
-
-				
-				
 				exit(EXIT_SUCCESS);
 			} 
 
@@ -381,9 +253,6 @@ int main()
 			}
 
 		} 
-
-     
-
 
 
 
@@ -481,88 +350,89 @@ static void do_ls(char *path)
 	closedir(d);
 }
 
-/*
 
-int redirect_out_echo(char **arg)
+
+
+int redirect_out(char **cmd)
 {
-	int a;
+	int i;
 	int fd;
 
-	for(a = 0; arg[a] != NULL; a++)
+	for(i =0; cmd[i] != NULL; i++)
 	{
-		if(!strcmp(arg[a],">"))
+		if(!strcmp(cmd[i],">"))
 		{
 			break;
 		}
 	}
 
-	if(arg[a])
+	if(cmd[i])
 	{
-		if(!arg[a+1])
+		if(!cmd[i+1])
 		{
 			return -1;
 		}
 		else
 		{
-			if((fd = open(arg[a+1],O_RDWR|O_CREAT|S_IROTH, 0644)) == -1)
+			if((fd = open(cmd[i+1],O_RDWR|O_CREAT|S_IROTH, 0644)) == -1)
 			{
-				perrer(arg[a+1]);
+				perrer(cmd[i+1]);
 				retrun -1;
 			}
 		}
 
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
-		arg[a] = NULL;
-		arg[a+1] = NULL;
-		for(a = a; arg[a]! = NULL; a++)
+		cmd[i] = NULL;
+		cmd[i+1] = NULL;
+		for(i = i; cmd[i]! = NULL; i++)
 		{
-			arg[a] = arg[a+2];
+			cmd[i] = cmd[i+2];
 		}
 
-		arg[a] = NULL;
+		cmd[i] = NULL;
 	}
 	return 0;
 }
 
-int redirect_in_echo(char ** arg)
+int redirect_in(char ** cmd)
 {
 
-	int a;
 	int fd;
 	
-	for(a =0; arg[a] != NULL; a++)
+	for(int i =0; cmd[i] != NULL; i++)
 	{
-		if(!strcmp(arg[a],">"))
+		if(!strcmp(cmd[i],">"))
 		{
 			break;
 		}
 	}
 
-	if(arg[a])
+	if(cmd[i])
 	{
-		if(!arg[a+1])
+		if(!cmd[i+1])
 		{
 			return -1;
 		}
 		else
 		{
-			if((fd = open(arg[a+1],O_RDONLY)) == -1)
+			if((fd = open(cmd[i+1],O_RDONLY)) == -1)
 			{
-				perrer(arg[a+1]);
-				return -1;
+				perrer(cmd[i+1]);
+				retrun -1;
 			}
 		}
 
 		dup2(fd, STDIN_FILENO);
 		close(fd);
-		for(a = a; arg[a]! = NULL; a++)
+		for(i = i; cmd[i]! = NULL; i++)
 		{
-			arg[a] = arg[a+2];
+			cmd[i] = cmd[i+2];
 		}
 
-		arg[a] = NULL;
+		cmd[i] = NULL;
 	}
 	return 0;
 }
-*/
+
+

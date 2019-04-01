@@ -1,4 +1,0 @@
-~/workspace/PA0/course_sched
-cd ~/workspace/PA0
-make
-make run
