@@ -116,7 +116,7 @@ int main()
 
 				else if (pid == 0)	// Child process 
 				{
-						execl("/usr/bin/make","make run",(char*)0);
+						execl("/usr/bin/make","make", "run",(char*)0);
 				} 
 
 
@@ -146,7 +146,7 @@ int main()
 
 				else if (pid == 0)	// Child process 
 				{
-					execl("/user/bin/make","make test",(char*)0);
+					execl("/user/bin/make","make", "test",(char*)0);
 				} 
 
 
@@ -360,13 +360,27 @@ int main()
 
 
 				// <echo Environmental variable>
-/*
+
 				else
 				{
-				
+					//printf("echo 환경변수를 출력하겠습니다.\n");
+
+					char *arg = (char*)malloc(strlen(buf)-2);
+					strncpy(arg, buf, strlen(buf)-1);
+					int N = 1;
+					char *ptr;
+					ptr = strtok(arg,"$");
+					while(ptr != NULL)
+					{
+	 				//printf("%s.\n",ptr);
+					if(N==2)
+						printf("%s",getenv(ptr));
+					N++;
+					ptr = strtok(NULL, " ");
+					}
 				}
 
-*/
+
 
 				
 				
@@ -386,31 +400,118 @@ int main()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		// <ls command>
+
+
+		else if(strncmp(buf, "ls", 2) == 0) {
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+	
+
+			else if (pid == 0)	// Child process 
+			{
+				char *arg[] = {"ls", ">", "students.txt"};		
+				int fd;
+					
+				if((fd = open(arg[2], O_RDWR | O_CREAT, 0644)) == -1)
+				{
+					printf("open error\n");
+					exit(1);
+				}
+
+				dup2(fd, 1);	//stdout_fileno
+				execl("/bin/ls","ls",(char*)0);
+				close(fd);
+
+			//do_ls(".");
+				exit(EXIT_SUCCESS);
+			} 
+
+
+			else	// Parent process 
+			{
+				waitpid(pid, &status, WNOHANG);
+				
+			}
+
+		} 
+
+
+
+
+
+
+
+		// <grep command>
+
+
+		else if(strncmp(buf, "grep", 4) == 0) {
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+	
+
+			else if (pid == 0)	// Child process 
+			{
+				int fd;
+				char *arg[] = {"grep","Fan", "<", "students.txt"};		
+					
+				if((fd = open(arg[3], O_RDONLY)) == -1)
+				{
+					printf("open error\n");						
+					exit(1);
+				}
+
+				dup2(fd, 0);	//stdin_fileno
+				execl("/bin/grep","grep","Fan",(char*)0);
+				close(fd);
+
+				exit(EXIT_SUCCESS);
+			} 
+
+
+			else	// Parent process 
+			{
+				waitpid(pid, &status, WNOHANG);
+				
+			}
+
+		} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// </bin/ls command>
 
 
 		else if(strncmp(buf, "/bin/ls", 7) == 0) {
@@ -459,7 +560,7 @@ int main()
 
 
 
-
+/*
 
 static void do_ls(char *path)
 {
@@ -479,90 +580,5 @@ static void do_ls(char *path)
 	}
 
 	closedir(d);
-}
-
-/*
-
-int redirect_out_echo(char **arg)
-{
-	int a;
-	int fd;
-
-	for(a = 0; arg[a] != NULL; a++)
-	{
-		if(!strcmp(arg[a],">"))
-		{
-			break;
-		}
-	}
-
-	if(arg[a])
-	{
-		if(!arg[a+1])
-		{
-			return -1;
-		}
-		else
-		{
-			if((fd = open(arg[a+1],O_RDWR|O_CREAT|S_IROTH, 0644)) == -1)
-			{
-				perrer(arg[a+1]);
-				retrun -1;
-			}
-		}
-
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-		arg[a] = NULL;
-		arg[a+1] = NULL;
-		for(a = a; arg[a]! = NULL; a++)
-		{
-			arg[a] = arg[a+2];
-		}
-
-		arg[a] = NULL;
-	}
-	return 0;
-}
-
-int redirect_in_echo(char ** arg)
-{
-
-	int a;
-	int fd;
-	
-	for(a =0; arg[a] != NULL; a++)
-	{
-		if(!strcmp(arg[a],">"))
-		{
-			break;
-		}
-	}
-
-	if(arg[a])
-	{
-		if(!arg[a+1])
-		{
-			return -1;
-		}
-		else
-		{
-			if((fd = open(arg[a+1],O_RDONLY)) == -1)
-			{
-				perrer(arg[a+1]);
-				return -1;
-			}
-		}
-
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-		for(a = a; arg[a]! = NULL; a++)
-		{
-			arg[a] = arg[a+2];
-		}
-
-		arg[a] = NULL;
-	}
-	return 0;
 }
 */
