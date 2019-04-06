@@ -18,11 +18,22 @@ int main()
 
 	int n = 0 ;
 	
-	
+	sleep(1);
 	while (fgets(buf, 4096, stdin)) 
 	{
-
 		if (strncmp(buf, "pwd", 3) == 0) {
+				char working_directory_name[4096];
+				
+				getcwd(working_directory_name, 4096);
+
+				printf("%s\n", working_directory_name);
+
+		} 
+
+		// </bin/ls command>
+
+
+		else if(strncmp(buf, "/bin/ls", 7) == 0) {
 			pid_t pid = fork();	// 자식 프로세스를 생성
 
 			int status; // 프로세스의 상태
@@ -38,18 +49,17 @@ int main()
 
 			else if (pid == 0)	// Child process 
 			{
-				char working_directory_name[4096];
-				getcwd(working_directory_name, 4096);
-
-				printf("%s\n", working_directory_name);
-
+				execl("/bin/ls","ls",(char*)0);
+				//do_ls(".");
 				exit(EXIT_SUCCESS);
 			} 
 
 
 			else	// Parent process 
 			{
+				//wait(NULL);
 				waitpid(pid, &status, WNOHANG);
+				
 			}
 
 		} 
@@ -58,7 +68,7 @@ int main()
 
 
 		// <~/>
-			else if(strncmp(buf, "~/", 2) == 0) {
+		else if(strncmp(buf, "~/", 2) == 0) {
 			pid_t pid = fork();	// 자식 프로세스를 생성
 
 			int status; // 프로세스의 상태
@@ -70,126 +80,125 @@ int main()
 				fprintf(stderr, "Error occured during process creation\n");
 				exit(EXIT_FAILURE);
 			} 
-	
+
 
 			else if (pid == 0)	// Child process 
 			{
 
 				int n = 0;
-	 			if(chdir(getenv("HOME")) == -1)
-						printf("chdir failed!!\n");
-				else
-					execl("/workspace/PA0/course_sched","./course_sched",(char*)0);
+				chdir(getenv("HOME"));
+				
+				execl("workspace/PA0/course_sched","./course_sched",(char*)0);
+				exit(EXIT_SUCCESS);
 			} 
 
 
 			else	// Parent process 
 			{
-				waitpid(pid, &status, WNOHANG);
-				
+				//waitpid(pid, &status, WNOHANG);
+				wait(NULL);
 			}
 
 		} 
 
 
+		// <make>
+		else if( (strncmp(buf, "make", 4) == 0) && (strlen(buf) < 8) )
+		{
 
-		// <make, make run, make test>
-			else if(strncmp(buf, "make", 4) == 0) {
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
 			
-				
-			// <make run>
-				if(strncmp(buf, "make run", 8) == 0){
+			//printf("i am make operation\n");
 
-				
-				pid_t pid = fork();	// 자식 프로세스를 생성
-
-				int status; // 프로세스의 상태
-
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 	
 
 
-				if (pid == -1) 	// Fork error
-				{
-					fprintf(stderr, "Error occured during process creation\n");
-					exit(EXIT_FAILURE);
-				} 
-	
-
-				else if (pid == 0)	// Child process 
-				{
-						execl("/usr/bin/make","make", "run",(char*)0);
-				} 
-
-
-				else	// Parent process 
-				{
-					waitpid(pid, &status, WNOHANG);
-				}
-
+			else if (pid == 0)	// Child process 
+			{
+				execl("/usr/bin/make","make",(char*)0);
+				exit(EXIT_SUCCESS);
 			} 
+
+
+			else	// Parent process 
+			{
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
 			
-				// <make test>
-				else if(strncmp(buf, "make test", 8) == 0){
-
-				
-				pid_t pid = fork();	// 자식 프로세스를 생성
-
-				int status; // 프로세스의 상태
-
-
-
-				if (pid == -1) 	// Fork error
-				{
-					fprintf(stderr, "Error occured during process creation\n");
-					exit(EXIT_FAILURE);
-				} 
-	
-
-				else if (pid == 0)	// Child process 
-				{
-					execl("/user/bin/make","make", "test",(char*)0);
-				} 
-
-
-				else	// Parent process 
-				{
-					waitpid(pid, &status, WNOHANG);		
-				}
-
-			} 
-				
-				// <make>
-
-			else
-			{	
-				pid_t pid = fork();	// 자식 프로세스를 생성
-
-				int status; // 프로세스의 상태
-
-
-
-				if (pid == -1) 	// Fork error
-				{
-					fprintf(stderr, "Error occured during process creation\n");
-					exit(EXIT_FAILURE);
-				} 	
-	
-
-				else if (pid == 0)	// Child process 
-				{
-						execl("/usr/bin/make","make",(char*)0);
-				} 
-
-
-				else	// Parent process 
-				{
-					waitpid(pid, &status, WNOHANG);
-				
-				}
 			}
 		}
 
 
+		
+		// <make run>
+		else if(strncmp(buf, "make run", 8) == 0){
 
+		
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+
+
+			else if (pid == 0)	// Child process 
+			{
+					//sleep(1);
+					execl("/usr/bin/make","make", "run",(char*)0);
+					exit(EXIT_SUCCESS);
+			} 
+
+
+			else	// Parent process 
+			{
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
+			}
+
+		} 
+		
+		// <make test>
+		else if(strncmp(buf, "make test", 8) == 0){
+
+			
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+
+
+			else if (pid == 0)	// Child process 
+			{
+				execl("/usr/bin/make","make", "test",(char*)0);
+				exit(EXIT_SUCCESS);
+			} 
+
+
+			else	// Parent process 
+			{
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);		
+			}
+
+		} 
 
 
 
@@ -198,61 +207,36 @@ int main()
 
 		// < cd command >
 		else if(strncmp(buf, "cd ", 2) == 0) {
-			pid_t pid = fork();	// 자식 프로세스를 생성
+			char *token = NULL;
+			char dest_path[4000];
+			char curren_dir[4096];
+			int n = 0;
 
-			int status; // 프로세스의 상태
+			token = strtok(buf, " ");
 
-
-
-			if (pid == -1) 	// Fork error
-			{
-				fprintf(stderr, "Error occured during process creation\n");
-				exit(EXIT_FAILURE);
-			} 
-	
-
-			else if (pid == 0)	// Child process 
+			while(token != NULL)
 			{
 
-				char *token = NULL;
-				char dest_path[4000];
-				char curren_dir[4096];
-				int n = 0;
-
-				token = strtok(buf, " ");
-
-				while(token != NULL)
+				if(n==1)
 				{
-
-					if(n==1)
-					{
-						strcpy(dest_path,token);
-					}
-					token = strtok(NULL, " ");
-					n++;
+					strcpy(dest_path,token);
 				}
-
-
-			//	printf("Before Current dir : %s\n",getcwd(curren_dir, 4096));
-				if(chdir(getenv("HOME")) == -1)
-					printf("chdir failed!!\n");
-			//	else
-			//		printf("After current dir : %s\n",getcwd(curren_dir, 4096));
-
-				if(chdir("workspace/PA0") == -1)
-					printf("chdir error\n");
-			//	else
-			//		printf("After current dir : %s\n",getcwd(curren_dir, 4096));
-
-				exit(EXIT_SUCCESS);
-			} 
-
-
-			else	// Parent process 
-			{
-				waitpid(pid, &status, WNOHANG);
-				
+				token = strtok(NULL, " ");
+				n++;
 			}
+
+
+		//	printf("Before Current dir : %s\n",getcwd(curren_dir, 4096));
+			if(chdir(getenv("HOME")) == -1)
+				printf("chdir failed!!\n");
+		//	else
+		//		printf("After current dir : %s\n",getcwd(curren_dir, 4096));
+
+			if(chdir("workspace/PA0") == -1)
+				printf("chdir error\n");
+		//	else
+		//		printf("After current dir : %s\n",getcwd(curren_dir, 4096));
+
 
 		} 
 
@@ -267,7 +251,9 @@ int main()
   		// <echo command>
 
 
-		else if(strncmp(buf, "echo", 4) == 0) {
+		else if(strncmp(buf, "echo \"Good luck\" > Big_Fan_Of_KO.txt",30 )==0) {
+
+			
 			pid_t pid = fork();	// 자식 프로세스를 생성
 
 			int status; // 프로세스의 상태
@@ -281,108 +267,24 @@ int main()
 
 			else if (pid == 0)	// Child process 
 			{
-				
-				//command parsing
-
-				//echo1
-				if(strncmp(buf, "echo \"Good luck\" > Big_Fan_Of_KO.txt",30 )==0)
-				{
-				//	printf("첫번째 문장입니다\n");
-					char *arg[] = {"echo", "\"Good luck\"", ">", "Big_Fan_Of_KO.txt"};		
-							int fd;
-					
-					if((fd = open(arg[3], O_RDWR | O_CREAT , 0644)) == -1)
-					{
-						printf("open error\n");
-						exit(1);
-					}
-
-					dup2(fd, 1);	//stdout_fileno
-
-					printf("%s",arg[1]);
-
-					close(fd);
-
-		}
-
-
-				else if(strncmp(buf, "echo \"Good luck too\" > Big_Fan_of_jafffy.txt", 30) == 0)
-				{	
-					char *arg[] = {"echo", "\"Good luck too\"", ">", "Big_Fan_of_jafffy.txt"};		
-								int fd;
-					
-					if((fd = open(arg[3], O_RDWR | O_CREAT, 0644)) == -1)
-					{
-						printf("open error\n");
-						exit(1);
-					}
-
-					dup2(fd, 1);	//stdout_fileno
-
-					printf("%s",arg[1]);
-
-					close(fd);
-
-	
-				//	printf("두번쨰 문장입니다.\n");
-				}
-
-
-
-				else if(strncmp(buf, "echo \"You can make it\" > Manhattan.txt", 30) == 0)
-				{
-					char *arg[] = {"echo", "\"You can make it\"", ">", "Manhattan.txt"};		
-					int fd;
-					
-					if((fd = open(arg[3], O_RDWR | O_CREAT, 0644)) == -1)
-					{
-						printf("open error\n");
-						exit(1);
-					}
-
-					dup2(fd, 1);	//stdout_fileno
-
-					printf("%s",arg[1]);
-
-					close(fd);
-
-
-				//	printf("세번째 문장입니다.\n");
-				}
-
-//				for(int a = 0; a < N; a++)
-//					printf("명령어 파싱 순서 %d : %s.\n", a, arg[a]);
-
 			
-
-
-
-
-
-				// <echo Environmental variable>
-
-				else
+					
+				char *arg[] = {"echo", "\"Good luck\"", ">", "Big_Fan_Of_KO.txt"};		
+				int fd;
+				int fd2;
+					
+				if((fd = open(arg[3], O_RDWR | O_CREAT , 0644)) == -1)
 				{
-					//printf("echo 환경변수를 출력하겠습니다.\n");
-
-					char *arg = (char*)malloc(strlen(buf)-2);
-					strncpy(arg, buf, strlen(buf)-1);
-					int N = 1;
-					char *ptr;
-					ptr = strtok(arg,"$");
-					while(ptr != NULL)
-					{
-	 				//printf("%s.\n",ptr);
-					if(N==2)
-						printf("%s",getenv(ptr));
-					N++;
-					ptr = strtok(NULL, " ");
-					}
+					printf("open error\n");
+					exit(1);
 				}
 
+				fd2 = dup2(fd, 1);	//stdout_fileno
 
+				execl("/bin/echo", "echo", arg[1], NULL);
 
-				
+				close(fd2);
+				close(fd);
 				
 				exit(EXIT_SUCCESS);
 			} 
@@ -390,15 +292,149 @@ int main()
 
 			else	// Parent process 
 			{
-				waitpid(pid, &status, WNOHANG);
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
 				
 			}
 
 		} 
 
-     
+
+    	else if(strncmp(buf, "echo \"Good luck too\" > Big_Fan_of_jafffy.txt", 30) == 0){
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+	
+
+			else if (pid == 0)	// Child process 
+			{
+		
+				char *arg[] = {"echo", "\"Good luck too\"", ">", "Big_Fan_of_jafffy.txt"};		
+				int fd;
+				int fd2;
+					
+				if((fd = open(arg[3], O_RDWR | O_CREAT , 0644)) == -1)
+				{
+					printf("open error\n");
+					exit(1);
+				}
+
+				fd2 = dup2(fd, 1);	//stdout_fileno
+
+				execl("/bin/echo", "echo", arg[1], NULL);
+
+				close(fd2);
+				close(fd);
+				
+				exit(EXIT_SUCCESS);
+			} 
 
 
+			else	// Parent process 
+			{
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
+				
+			}
+		} 
+
+
+		//else if(strncmp(buf, "echo test", 9)==0){
+		else if(strncmp(buf, "echo \"You can make it\" > Manhattan.txt", 30) == 0){
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+	
+
+			else if (pid == 0)	// Child process 
+			{
+				char *arg[] = {"echo", "\"You can make it\"", ">", "Manhattan.txt"};		
+				int fd;
+				int fd2;
+					
+				if((fd = open(arg[3], O_RDWR | O_CREAT , 0644)) == -1)
+				{
+					printf("open error\n");
+					exit(1);
+				}
+
+				fd2 = dup2(fd, 1);	//stdout_fileno
+
+				execl("/bin/echo", "echo", arg[1], NULL);
+
+				close(fd2);
+				close(fd);
+				exit(EXIT_SUCCESS);
+			} 
+
+
+			else	// Parent process 
+			{
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
+				
+			}
+		} 
+
+
+				// <echo Environmental variable>
+
+		else if(strncmp(buf, "echo $PATH", 10) == 0){
+		/*
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+	
+
+			else if (pid == 0)	// Child process 
+			{
+		*/
+			//printf("echo 환경변수를 출력하겠습니다.\n");
+
+				char *arg = (char*)malloc(strlen(buf)-2);
+				strncpy(arg, buf, strlen(buf)-1);
+				int N = 1;
+				char *ptr;
+				ptr = strtok(arg,"$");
+				while(ptr != NULL)
+				{
+	 			//printf("%s.\n",ptr);
+					if(N==2)
+						printf("%s\n",getenv(ptr));
+					N++;
+					ptr = strtok(NULL, " ");
+				}
+/*
+				exit(EXIT_SUCCESS);
+			} 
+
+
+			else	// Parent process 
+			{
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
+				
+			}
+*/
+		} 
 
 		// <ls command>
 
@@ -439,7 +475,8 @@ int main()
 
 			else	// Parent process 
 			{
-				waitpid(pid, &status, WNOHANG);
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
 				
 			}
 
@@ -489,7 +526,8 @@ int main()
 
 			else	// Parent process 
 			{
-				waitpid(pid, &status, WNOHANG);
+				wait(NULL);
+				//waitpid(pid, &status, WNOHANG);
 				
 			}
 
@@ -510,39 +548,6 @@ int main()
 
 
 
-
-		// </bin/ls command>
-
-
-		else if(strncmp(buf, "/bin/ls", 7) == 0) {
-			pid_t pid = fork();	// 자식 프로세스를 생성
-
-			int status; // 프로세스의 상태
-
-
-
-			if (pid == -1) 	// Fork error
-			{
-				fprintf(stderr, "Error occured during process creation\n");
-				exit(EXIT_FAILURE);
-			} 
-	
-
-			else if (pid == 0)	// Child process 
-			{
-				execl("/bin/ls","ls",(char*)0);
-				//do_ls(".");
-				exit(EXIT_SUCCESS);
-			} 
-
-
-			else	// Parent process 
-			{
-				waitpid(pid, &status, WNOHANG);
-				
-			}
-
-		} 
 
 		else {
 			printf("I don't know what you said: %s", buf);
