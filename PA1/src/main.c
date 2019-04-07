@@ -439,7 +439,7 @@ int main()
 		// <ls command>
 
 
-		else if(strncmp(buf, "ls", 2) == 0) {
+		else if(strncmp(buf, "ls > student.txt", 10) == 0) {
 			pid_t pid = fork();	// 자식 프로세스를 생성
 
 			int status; // 프로세스의 상태
@@ -536,6 +536,170 @@ int main()
 
 
 
+		//<alias 기능>
+		else if(strncmp(buf, "ready-to-score", 12) == 0){
+
+				
+				pid_t pid = fork();	// 자식 프로세스를 생성
+
+				int status; // 프로세스의 상태
+
+
+
+				if (pid == -1) 	// Fork error
+				{
+					printf("레디투 스코어\n");
+					fprintf(stderr, "Error occured during process creation\n");
+					exit(EXIT_FAILURE);
+				} 
+	
+
+				else if (pid == 0)	// Child process 
+				{
+					chdir(getenv("HOME"));
+					execl("workspace/PA1/scripts/ready-to-score.py","./ready-to-score.py", "./2019-1-PA0",(char*)0);
+					exit(EXIT_SUCCESS);
+			
+				} 
+
+
+				else	// Parent process 
+				{
+					wait(NULL);
+				}
+
+			} 
+
+		else if(strncmp(buf, "generate-fake-pa0s.py", 15) == 0){
+
+				
+				pid_t pid = fork();	// 자식 프로세스를 생성
+
+				int status; // 프로세스의 상태
+
+
+
+				if (pid == -1) 	// Fork error
+				{
+					fprintf(stderr, "Error occured during process creation\n");
+					exit(EXIT_FAILURE);
+				} 
+	
+
+				else if (pid == 0)	// Child process 
+				{
+					chdir(getenv("HOME"));
+					execl("workspace/PA1/scripts/genarate-fake-pa0s.py","./genarate-fake-pa0s.py", "2019-1-PA0",(char*)0);
+					exit(EXIT_SUCCESS);
+				} 
+
+
+				else	// Parent process 
+				{
+					waitpid(pid, &status, WNOHANG);
+				}
+
+			} 
+	
+		else if(strncmp(buf, "auto-grade-pa0", 10) == 0){
+
+				
+				pid_t pid = fork();	// 자식 프로세스를 생성
+
+				int status; // 프로세스의 상태
+
+
+
+				if (pid == -1) 	// Fork error
+				{
+					fprintf(stderr, "Error occured during process creation\n");
+					exit(EXIT_FAILURE);
+				} 
+	
+
+				else if (pid == 0)	// Child process 
+				{
+					printf("오토 그래이드 피에이 0\n");
+					execl("/usr/lib/python3","python3", "/scrots/auto-grade-pa0.py",(char*)0);
+					exit(EXIT_SUCCESS);
+				} 
+
+
+				else	// Parent process 
+				{
+					wait(NULL);
+				}
+
+			} 
+
+
+
+	
+		else if(strncmp(buf, "report-grade", 10) == 0){
+
+				
+				pid_t pid = fork();	// 자식 프로세스를 생성
+
+				int status; // 프로세스의 상태
+
+
+
+				if (pid == -1) 	// Fork error
+				{
+					fprintf(stderr, "Error occured during process creation\n");
+					exit(EXIT_FAILURE);
+				} 
+	
+
+				else if (pid == 0)	// Child process 
+				{
+					printf("report-grade\n");
+					execl("/usr/lib/python3","python3", "scripts/report-grade.py",(char*)0);
+					exit(EXIT_SUCCESS);
+				} 
+
+
+				else	// Parent process 
+				{
+					wait(NULL);
+				}
+
+			} 
+
+
+		// <ls comma:nd>
+
+
+		else if((strncmp(buf, "ls", 2) == 0)&&(strlen(buf) < 5)) {
+			pid_t pid = fork();	// 자식 프로세스를 생성
+
+			int status; // 프로세스의 상태
+
+
+
+			if (pid == -1) 	// Fork error
+			{
+				fprintf(stderr, "Error occured during process creation\n");
+				exit(EXIT_FAILURE);
+			} 
+	
+
+			else if (pid == 0)	// Child process 
+			{
+				execl("/bin/ls","ls","scripts/2019-1-PA0/",(char*)0);
+				//do_ls(".");
+				exit(EXIT_SUCCESS);
+			} 
+
+
+			else	// Parent process 
+			{
+				//wait(NULL);
+				waitpid(pid, &status, WNOHANG);
+				
+			}
+
+		} 
 
 
 

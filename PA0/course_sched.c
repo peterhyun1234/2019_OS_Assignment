@@ -40,6 +40,12 @@ int main(int argc, char** argv)
 	int Order[6] = {0,};
 	fp = fopen("./in/database.csv", "r");
 
+
+	if(fp == NULL)
+	{
+		return 0;
+	}
+
 	if(fp != NULL)
 	{
 
@@ -102,7 +108,6 @@ int main(int argc, char** argv)
 
 
 // argv[1]에서 받아온 데이터 파싱
-
 	FILE *fp2 = NULL;
 	
 
@@ -159,10 +164,14 @@ int main(int argc, char** argv)
 	}
 
 
+
 	// 순서 초기화
 	for(int u = 0; u < 6; u++)
 	Order[u] = u;
-/*
+
+	
+	
+	/*
 	printf("Before first sorting : ");
 
 	for(int c = 0; c < 6; c++)
@@ -203,7 +212,7 @@ for(int a = 0; a < i; a++)
 	}
 
 	fclose(fp);
-	fclose(fp2);
+//	fclose(fp2);
 
   return 0;
 }
