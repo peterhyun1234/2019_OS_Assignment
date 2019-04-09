@@ -548,7 +548,7 @@ int main()
 
 				if (pid == -1) 	// Fork error
 				{
-					printf("레디투 스코어\n");
+					
 					fprintf(stderr, "Error occured during process creation\n");
 					exit(EXIT_FAILURE);
 				} 
@@ -556,8 +556,7 @@ int main()
 
 				else if (pid == 0)	// Child process 
 				{
-					chdir(getenv("HOME"));
-					execl("workspace/PA1/scripts/ready-to-score.py","./ready-to-score.py", "./2019-1-PA0",(char*)0);
+					execl("/usr/bin/python3","python3", "scripts/ready-to-score.py",(char*)0);
 					exit(EXIT_SUCCESS);
 			
 				} 
@@ -588,8 +587,7 @@ int main()
 
 				else if (pid == 0)	// Child process 
 				{
-					chdir(getenv("HOME"));
-					execl("workspace/PA1/scripts/genarate-fake-pa0s.py","./genarate-fake-pa0s.py", "2019-1-PA0",(char*)0);
+					execl("/usr/bin/python3","python3", "scripts/generate-fake-pa0s.py",(char*)0);
 					exit(EXIT_SUCCESS);
 				} 
 
@@ -619,8 +617,7 @@ int main()
 
 				else if (pid == 0)	// Child process 
 				{
-					printf("오토 그래이드 피에이 0\n");
-					execl("/usr/lib/python3","python3", "/scrots/auto-grade-pa0.py",(char*)0);
+					execl("/usr/bin/python3","python3", "scripts/auto-grade-pa0.py",(char*)0);
 					exit(EXIT_SUCCESS);
 				} 
 
@@ -653,8 +650,7 @@ int main()
 
 				else if (pid == 0)	// Child process 
 				{
-					printf("report-grade\n");
-					execl("/usr/lib/python3","python3", "scripts/report-grade.py",(char*)0);
+					execl("/usr/bin/python3","python3", "scripts/report-grade.py",(char*)0);
 					exit(EXIT_SUCCESS);
 				} 
 
@@ -686,7 +682,7 @@ int main()
 
 			else if (pid == 0)	// Child process 
 			{
-				execl("/bin/ls","ls","scripts/2019-1-PA0/",(char*)0);
+				execl("/bin/ls","ls",(char*)0);
 				//do_ls(".");
 				exit(EXIT_SUCCESS);
 			} 
