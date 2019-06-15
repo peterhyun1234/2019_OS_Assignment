@@ -151,36 +151,23 @@ void page_fault_handler(uint8_t page_num)
 uint32_t to_phy_addr(uint32_t virt_addr)
 {
 
-	uint32_t Phy_addr = 0;
+	uint32_t Phy_addr;
 	uint8_t Page_num;
 
 	//bit masking
 	size_t addr_offset = 0;
 
-	for(int a = 1; a < 9; a++)	//offset
-	{
-		if(virt_addr & a)
-			addr_offset |= (uint8_t)pow(2, a-1);
-	}
-	for(int b = 9; b < 17; b++)	//page_num
-	{
-		int n;
-		if(virt_addr & b){
-			n = b - 9;
-			Page_num |= (uint8_t)pow(2, n-1);
-		}	
-	}
+	Page_num = (virt_addr >> 8) & 0xff;
+	//printf("Page_num: %d\n", Page_num);
+
+	addr_offset = virt_addr & 0xff;
+	//printf("addr_offset: %d\n", addr_offset);
 
 
 	uint8_t Frame_num = lookup_tlb(Page_num);
 
 	//phy_addr = frame_num + offset
-	Phy_addr = addr_offset;
-	for(int c = 1; c < 9; c++)	//confirm frame_num bit
-	{
-		if(Frame_num & c)
-			Phy_addr |= (uint32_t)pow(2, c+8);
-	}
+	Phy_addr = (Frame_num << 8) + addr_offset;
 
 	return Phy_addr; 
 }
@@ -192,19 +179,10 @@ uint8_t lookup_phy_mem(uint32_t phy_addr)
 	//bit masking
 	size_t addr_offset = 0;
 
-	for(int a = 1; a < 9; a++)	//offset
-	{
-		if(phy_addr & a)
-			addr_offset |= (uint8_t)pow(2, a-1);
-	}
-	for(int b = 9; b < 17; b++)	//Frame_num
-	{
-		int n;
-		if(phy_addr & b){
-			n = b - 9;
-			Frame_num |= (uint8_t)pow(2, n-1);
-		}	
-	}	
+	Frame_num = (phy_addr >> 8) & 0xff;
+
+	addr_offset = phy_addr & 0xff;
+
 
 	return phy_mem[FRAME_SIZE*Frame_num + addr_offset]; 
 }
